@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lucy.timeline.mapper.UserMapper">
+
+    <select id = "selectUserList" resultType="com.lucy.timeline.model.User">
+        select
+            user_no, user_name, join_timestamp
+        from timeline.t_user
+        where is_deleted = 'F'
+        order by join_timestamp desc
+    </select>
+
+    <select id = "selectUserByUserNo" resultType="java.util.HashMap">
+        select
+        user_no, user_name, join_timestamp,
+        (
+            select count(*)
+            from timeline.t_follow f
+            where f.is_deleted = 'F'
+            and f.user_no = #{user_no}
+        ) follower_cnt,
+        (
+            select count(*)
+            from timeline.t_follow f
+            where f.is_deleted='F'
+            and f.follow_user_no = #{user_no}
+        ) following_cnt
+        from timeline.t_user
+        where user_no = #{user_no}
+        and is_deleted='F'
+    </select>
+
+    <select id = "insertUser" parameterType="com.lucy.timeline.model.User" resultType = "com.lucy.timeline.model.User">
+        insert into timeline.t_user (user_name, join_timestamp)
+        values ( #{user_name}, #{join_timestamp} )
+        returning user_no, user_name, join_timestamp
+    </select>
+
+    <update id= "updateUser" parameterType="com.lucy.timeline.model.User">
+        update timeline.t_user
+        set user_name = #{user_name}
+        where user_no = #{user_no}
+    </update>
+
+    <delete id = "deleteUser">
+        update timeline.t_user
+        set is_deleted = 'T'
+        where user_no = #{user_no}
+    </delete>
+
+    <insert id = "insertFollow" parameterType="com.lucy.timeline.model.Follow">
+        with upsert as (
+            update timeline.t_follow
+            set is_deleted='F'
+            where user_no = #{user_no} and follow_user_no = #{follow_user_no}
+            returning follow_no
+        )
+        insert into timeline.t_follow
+        (user_no, follow_user_no)
+        select #{user_no}, #{follow_user_no}
+        where not exists(select * from upsert)
+    </insert>
+
+    <delete id = "deleteFollow" parameterType="com.lucy.timeline.model.Follow">
+        update timeline.t_follow
+        set is_deleted = 'T'
+        where user_no = #{user_no}
+        and follow_user_no = #{follow_user_no}
+    </delete>
+</mapper>

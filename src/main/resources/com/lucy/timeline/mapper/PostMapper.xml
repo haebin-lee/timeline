@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lucy.timeline.mapper.PostMapper">
+    <select id = "selectNewsfeed" resultType = "java.util.HashMap">
+        with postings as (
+            select
+                post_no, user_no, contents, insert_timestamp
+            from timeline.t_post
+            where is_deleted='F'
+            and user_no in (
+                select user_no
+                from timeline.t_follow f
+                where f.follow_user_no = #{user_no}
+                and f.is_deleted='F'
+            )
+            union all
+            select
+                post_no, user_no, contents, insert_timestamp
+            from timeline.t_post
+            where is_deleted='F'
+            and user_no = #{user_no}
+        )
+        select u.user_no, u.user_name, p.post_no, p.contents, p.insert_timestamp
+        from postings p
+        join timeline.t_user u
+        on p.user_no = u.user_no
+        order by p.insert_timestamp desc
+
+    </select>
+    <select id = "selectPost" resultType="com.lucy.timeline.model.Post">
+        select post_no, user_no, contents
+        from timeline.t_post
+        where post_no = #{post_no}
+    </select>
+
+    <insert id="insertPost" parameterType="com.lucy.timeline.model.Post">
+        insert into timeline.t_post (user_no, contents)
+        values ( #{user_no}, #{contents} )
+    </insert>
+
+    <update id="updatePost" parameterType="com.lucy.timeline.model.Post">
+        update timeline.t_post
+        set
+            contents = #{contents}
+        where post_no = #{post_no}
+    </update>
+
+    <delete id = "deletePost">
+      update timeline.t_post
+        set
+            is_deleted = 'T'
+        where post_no = #{post_no}
+    </delete>
+</mapper>

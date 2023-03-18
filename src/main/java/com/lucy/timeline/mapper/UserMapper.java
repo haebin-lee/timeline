@@ -10,9 +10,9 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    List<User> selectUserList();
+    List<User> findUsers();
 
-    HashMap<String, Object> selectUserByUserNo(Long userNo);
+    HashMap<String, Object> findUser(Long userNo);
 
     User insertUser(User user);
 

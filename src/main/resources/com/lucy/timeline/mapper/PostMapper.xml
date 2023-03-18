@@ -2,54 +2,52 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.lucy.timeline.mapper.PostMapper">
-    <select id = "selectNewsfeed" resultType = "java.util.HashMap">
+    <select id = "findPosts" resultType = "com.lucy.timeline.model.Post">
         with postings as (
             select
-                post_no, user_no, contents, insert_timestamp
-            from timeline.t_post
+                post_no, user_no, contents, created_at
+            from timeline.post
             where is_deleted='F'
             and user_no in (
                 select user_no
                 from timeline.t_follow f
-                where f.follow_user_no = #{user_no}
-                and f.is_deleted='F'
+                where f.follow_user_no = #{userNo}
             )
             union all
             select
-                post_no, user_no, contents, insert_timestamp
-            from timeline.t_post
+                post_no, user_no, contents, created_at
+            from timeline.post
             where is_deleted='F'
-            and user_no = #{user_no}
+            and user_no = #{userNo}
         )
-        select u.user_no, u.user_name, p.post_no, p.contents, p.insert_timestamp
+        select u.user_no, u.user_name, p.post_no, p.contents, p.created_at
         from postings p
         join timeline.t_user u
         on p.user_no = u.user_no
         order by p.insert_timestamp desc
-
     </select>
-    <select id = "selectPost" resultType="com.lucy.timeline.model.Post">
+
+    <select id = "findPost" resultType="com.lucy.timeline.model.Post">
         select post_no, user_no, contents
-        from timeline.t_post
-        where post_no = #{post_no}
+        from timeline.post
+        where
+            post_no = #{postNo}
+            and user_no = #{userNo}
     </select>
 
-    <insert id="insertPost" parameterType="com.lucy.timeline.model.Post">
-        insert into timeline.t_post (user_no, contents)
-        values ( #{user_no}, #{contents} )
+    <insert id="addPost" parameterType="com.lucy.timeline.model.Post">
+        insert into timeline.post (user_no, contents)
+        values ( #{userNo}, #{contents} )
     </insert>
 
     <update id="updatePost" parameterType="com.lucy.timeline.model.Post">
-        update timeline.t_post
+        update timeline.post
         set
             contents = #{contents}
-        where post_no = #{post_no}
+        where post_no = #{postNo}
     </update>
 
     <delete id = "deletePost">
-      update timeline.t_post
-        set
-            is_deleted = 'T'
-        where post_no = #{post_no}
+        delete from timeline.post where post_no = #{postNo}
     </delete>
 </mapper>

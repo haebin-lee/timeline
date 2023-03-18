@@ -3,32 +3,28 @@
 
 <mapper namespace="com.lucy.timeline.mapper.UserMapper">
 
-    <select id = "selectUserList" resultType="com.lucy.timeline.model.User">
+    <select id = "findUsers" resultType="com.lucy.timeline.model.User">
         select
             user_no, user_name, join_timestamp
         from timeline.t_user
-        where is_deleted = 'F'
         order by join_timestamp desc
     </select>
 
-    <select id = "selectUserByUserNo" resultType="java.util.HashMap">
+    <select id = "findUser" resultType="java.util.HashMap">
         select
         user_no, user_name, join_timestamp,
         (
             select count(*)
             from timeline.t_follow f
-            where f.is_deleted = 'F'
-            and f.user_no = #{user_no}
+            where f.user_no = #{userNo}
         ) follower_cnt,
         (
             select count(*)
             from timeline.t_follow f
-            where f.is_deleted='F'
             and f.follow_user_no = #{user_no}
         ) following_cnt
         from timeline.t_user
         where user_no = #{user_no}
-        and is_deleted='F'
     </select>
 
     <select id = "insertUser" parameterType="com.lucy.timeline.model.User" resultType = "com.lucy.timeline.model.User">

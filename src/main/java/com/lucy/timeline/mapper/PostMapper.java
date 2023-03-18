@@ -1,18 +1,20 @@
 package com.lucy.timeline.mapper;
 
 import com.lucy.timeline.model.Post;
+import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Mapper
 public interface PostMapper {
-    List<HashMap<String, Object>> selectNewsfeed(Long user_no);
+    List<Post> findPosts(Long user_no);
 
-    Post selectPost(Long postNo);
+    Post findPost(Long userNo, Long postNo);
 
-    int insertPost(Post post);
+    int addPost(Post post);
 
     int updatePost(Post post);
 

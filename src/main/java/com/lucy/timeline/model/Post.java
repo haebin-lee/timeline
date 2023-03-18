@@ -1,34 +1,19 @@
 package com.lucy.timeline.model;
 
-public class Post {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
-    private Long post_no;
-    private Long user_no;
+@Getter
+public class Post {
+    private Long postNo;
+    private Long userNo;
     private String contents;
 
-    public Post() { }
-
-    public Long getPost_no() {
-        return post_no;
-    }
-
-    public void setPost_no(Long post_no) {
-        this.post_no = post_no;
-    }
-
-    public Long getUser_no() {
-        return user_no;
-    }
-
-    public void setUser_no(Long user_no) {
-        this.user_no = user_no;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
+    @Builder
+    public Post(Long userNo, Long postNo, String contents) {
+        this.userNo = userNo;
+        this.postNo = postNo;
         this.contents = contents;
     }
 }

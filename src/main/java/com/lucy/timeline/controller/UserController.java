@@ -1,48 +1,54 @@
 package com.lucy.timeline.controller;
 
+import com.lucy.timeline.model.User;
+import com.lucy.timeline.model.dto.UserDetail;
+import com.lucy.timeline.model.request.UserRequest;
+import com.lucy.timeline.model.response.UserDetailResponse;
+import com.lucy.timeline.model.response.UserResponse;
+import com.lucy.timeline.service.UserService;
 import io.swagger.annotations.Api;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RequiredArgsConstructor
 @Api(tags = "About Users")
+@RequestMapping("/timeline")
 @RestController
 public class UserController {
-//
-//    @Autowired
-//    private UserService userService;
-//
-//    @ApiParam(value = "find users")
-//    @GetMapping(value = "/users")
-//    public ResponseEntity<List<User>> findUsers(){
-//        List<User> users = userService.findUsers();
-//        return ResponseEntity.ok(users);
-//    }
-//
-//    @ApiParam(value = "find a user")
-//    @GetMapping(value = "/user/{userNo}")
-//    public CustomResult findUser(
-//            @PathVariable(value = "userNo", required = true) Long userNo
-//    ){
-//        HashMap<String, Object> user = userService.selectUserByUserNo(userNo);
-//
-//        CustomResult result = new CustomResult();
-//        if(user == null || user.isEmpty())
-//            result.setResultCode(HttpServletResponse.SC_NO_CONTENT);
-//        result.setResultData(user);
-//        return result;
-//    }
-//
-//    @ApiOperation(value = "유저 등록")
-//    @RequestMapping(value = "/user", method = RequestMethod.POST)
-//    public CustomResult insertUser(
-//            @RequestParam(value = "userName", required = true) String userName
-//    )throws Exception{
-//        User user = userService.insertUser(new User(userName, new Timestamp(System.currentTimeMillis())));
-//        CustomResult result = new CustomResult();
-//        if(user == null)
-//            result.setResultCode(HttpServletResponse.SC_BAD_REQUEST);
-//        result.setResultData(user);
-//        return result;
-//    }
+
+    private final UserService userService;
+
+    @ApiOperation(value = "find users")
+    @GetMapping(value = "/users")
+    public ResponseEntity<List<UserResponse>> findUsers(){
+        List<User> users = userService.findUsers();
+        return ResponseEntity.ok(users.stream().map(UserResponse::new).collect(Collectors.toList()));
+    }
+
+    @ApiOperation(value = "find a user")
+    @GetMapping(value = "/users/{userId}")
+    public ResponseEntity<UserDetailResponse> findUser(
+            @PathVariable(value = "userId") Long userId
+    ){
+        UserDetail user = userService.findUser(userId);
+        return ResponseEntity.ok(new UserDetailResponse(user));
+    }
+
+    @ApiOperation(value = "register a user")
+    @PostMapping(value = "/user")
+    public ResponseEntity<Void> addUser(
+            @RequestBody UserRequest request
+    ){
+        userService.addUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 //
 //    @ApiOperation(value = "유저 이름 변경")
 //    @RequestMapping(value = "/user/{userNo}", method = RequestMethod.PUT)

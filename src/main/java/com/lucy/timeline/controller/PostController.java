@@ -26,7 +26,7 @@ public class PostController {
     @ApiOperation(value = "find all registered posts")
     @GetMapping(value = "/users/{userNo}/posts")
     public ResponseEntity<List<PostResponse>> findPosts(
-            @PathVariable(value = "userNo") Long userNo
+            @PathVariable(value = "userId") Long userId
     ) {
 //        List<Post> posts = postService.findPosts(userNo);
         List<Post> posts = new ArrayList<>();
@@ -34,45 +34,45 @@ public class PostController {
     }
 
     @ApiOperation(value = "find a post")
-    @GetMapping(value = "/users/{userNo}/posts/{postNo}")
+    @GetMapping(value = "/users/{userId}/posts/{postId}")
     public ResponseEntity<Post> findPost(
-            @PathVariable(value = "userNo") Long userNo,
-            @PathVariable(value = "postNo") Long postNo
+            @PathVariable(value = "userId") Long userId,
+            @PathVariable(value = "postId") Long postId
     ){
-        Post post = postService.findPost(userNo, postNo);
+        Post post = postService.findPost(userId, postId);
         return ResponseEntity.ok(post);
     }
 
     @ApiOperation(value = "register a post")
-    @PostMapping(value = "/users/{userNo}/post")
+    @PostMapping(value = "/users/{userId}/post")
     public ResponseEntity<Void> addPost(
-            @PathVariable(value = "userNo") Long userNo,
+            @PathVariable(value = "userId") Long userId,
             @RequestBody PostRequest request
     ){
-        postService.addPost(userNo, request.getContents());
+        postService.addPost(userId, request.getContents());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @ApiOperation(value = "update a post")
-    @PutMapping(value = "/users/{userNo}/posts/{postNo}")
+    @PutMapping(value = "/users/{userId}/posts/{postId}")
     public ResponseEntity<Void> updatePost(
-            @PathVariable(value = "userNo") Long userNo,
-            @PathVariable(value = "postNo") Long postNo,
+            @PathVariable(value = "userId") Long userId,
+            @PathVariable(value = "postId") Long postId,
             @RequestBody PostRequest request
     ){
         // todo: check user validation
-        postService.updatePost(postNo, request.getContents());
+        postService.updatePost(postId, request.getContents());
         return ResponseEntity.ok().build();
     }
 
     @ApiOperation(value = "delete a post")
-    @DeleteMapping(value = "/users/{userNo}/posts/{postNo}")
+    @DeleteMapping(value = "/users/{userId}/posts/{postId}")
     public ResponseEntity<Void> deletePost(
-            @PathVariable(value = "userNo") Long userNo,
-            @PathVariable(value = "postNo") Long postNo
+            @PathVariable(value = "userId") Long userId,
+            @PathVariable(value = "postId") Long postId
     ){
         // todo: check user validation
-        postService.deletePost(postNo);
+        postService.deletePost(postId);
         return ResponseEntity.ok().build();
     }
 }

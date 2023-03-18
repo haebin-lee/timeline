@@ -5,44 +5,34 @@
 
     <select id = "findUsers" resultType="com.lucy.timeline.model.User">
         select
-            user_no, user_name, join_timestamp
-        from timeline.t_user
-        order by join_timestamp desc
+            id, name, joined_at
+        from timeline.user
+        order by joined_at desc
     </select>
 
-    <select id = "findUser" resultType="java.util.HashMap">
+    <!-- follower_cnt, following cnt-->
+    <select id = "findUser" resultType="com.lucy.timeline.model.dto.UserDetail">
         select
-        user_no, user_name, join_timestamp,
-        (
-            select count(*)
-            from timeline.t_follow f
-            where f.user_no = #{userNo}
-        ) follower_cnt,
-        (
-            select count(*)
-            from timeline.t_follow f
-            and f.follow_user_no = #{user_no}
-        ) following_cnt
-        from timeline.t_user
-        where user_no = #{user_no}
+            id, name, joined_at,
+            (select count(*) from timeline.follow where user_id = #{userId}) follower_cnt,
+            (select count(*) from timeline.follow where follow_user_id = #{userId}) following_cnt
+        from timeline.user
+        where id = #{userId}
     </select>
 
-    <select id = "insertUser" parameterType="com.lucy.timeline.model.User" resultType = "com.lucy.timeline.model.User">
-        insert into timeline.t_user (user_name, join_timestamp)
-        values ( #{user_name}, #{join_timestamp} )
-        returning user_no, user_name, join_timestamp
+    <select id = "addUser" parameterType="com.lucy.timeline.model.User">
+        insert into timeline.user (name, joined_at)
+        values ( #{name}, #{joinedAt} )
     </select>
 
     <update id= "updateUser" parameterType="com.lucy.timeline.model.User">
-        update timeline.t_user
-        set user_name = #{user_name}
+        update timeline.user
+        set name = #{name}
         where user_no = #{user_no}
     </update>
 
     <delete id = "deleteUser">
-        update timeline.t_user
-        set is_deleted = 'T'
-        where user_no = #{user_no}
+        delete from timeline.user where id = {userId}
     </delete>
 
     <insert id = "insertFollow" parameterType="com.lucy.timeline.model.Follow">

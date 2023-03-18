@@ -10,14 +10,14 @@ import java.util.List;
 
 @Mapper
 public interface PostMapper {
-    List<Post> findPosts(Long user_no);
+    List<Post> findPosts(Long userId);
 
-    Post findPost(Long userNo, Long postNo);
+    Post findPost(Long userId, Long postId);
 
     int addPost(Post post);
 
     int updatePost(Post post);
 
-    int deletePost(Long postNo);
+    int deletePost(Long id);
 
 }

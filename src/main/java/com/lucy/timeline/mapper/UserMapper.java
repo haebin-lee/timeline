@@ -2,9 +2,9 @@ package com.lucy.timeline.mapper;
 
 import com.lucy.timeline.model.Follow;
 import com.lucy.timeline.model.User;
+import com.lucy.timeline.model.dto.UserDetail;
 import org.mapstruct.Mapper;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Mapper
@@ -12,15 +12,15 @@ public interface UserMapper {
 
     List<User> findUsers();
 
-    HashMap<String, Object> findUser(Long userNo);
+    UserDetail findUser(Long userId);
 
-    User insertUser(User user);
+    void addUser(User user);
 
-    int updateUser(User user);
+    void updateUser(User user);
 
-    int deleteUser(Long userNo);
+    void deleteUser(Long userNo);
 
-    int insertFollow(Follow follow);
+    void insertFollow(Follow follow);
 
-    int deleteFollow(Follow follow);
+    void deleteFollow(Follow follow);
 }

@@ -28,26 +28,26 @@
     </select>
 
     <select id = "findPost" resultType="com.lucy.timeline.model.Post">
-        select post_no, user_no, contents
+        select id, user_id, contents
         from timeline.post
         where
-            post_no = #{postNo}
-            and user_no = #{userNo}
+            id = #{postId}
+            and user_id = #{userId}
     </select>
 
     <insert id="addPost" parameterType="com.lucy.timeline.model.Post">
-        insert into timeline.post (user_no, contents)
-        values ( #{userNo}, #{contents} )
+        insert into timeline.post (user_id, contents)
+        values ( #{userId}, #{contents} )
     </insert>
 
     <update id="updatePost" parameterType="com.lucy.timeline.model.Post">
         update timeline.post
         set
             contents = #{contents}
-        where post_no = #{postNo}
+        where id = #{id}
     </update>
 
     <delete id = "deletePost">
-        delete from timeline.post where post_no = #{postNo}
+        delete from timeline.post where id = #{postId}
     </delete>
 </mapper>

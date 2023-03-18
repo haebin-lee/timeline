@@ -5,13 +5,13 @@ import lombok.Getter;
 
 @Getter
 public class PostResponse {
-    private Long postNo;
-    private Long userNo;
+    private Long id;
+    private Long userId;
     private String contents;
 
     public PostResponse(Post post) {
-        this.postNo = post.getPostNo();
-        this.userNo = post.getUserNo();
+        this.id = post.getId();
+        this.userId = post.getUserId();
         this.contents = post.getContents();
     }
 }

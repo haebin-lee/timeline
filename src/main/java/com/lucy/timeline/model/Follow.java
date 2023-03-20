@@ -1,11 +1,18 @@
 package com.lucy.timeline.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@AllArgsConstructor
 @Getter
 public class Follow {
 
-    private Long follow_no;
-    private Long user_no;
-    private Long follow_user_no;
+    private Long id;
+    private Long userId;
+    private Long followUserId;
+
+    public Follow(Long userId, Long followUserId) {
+        this.userId = userId;
+        this.followUserId = followUserId;
+    }
 }

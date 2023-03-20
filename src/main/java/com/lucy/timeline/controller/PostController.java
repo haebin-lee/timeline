@@ -24,12 +24,11 @@ public class PostController {
     private final PostService postService;
 
     @ApiOperation(value = "find all registered posts")
-    @GetMapping(value = "/users/{userNo}/posts")
+    @GetMapping(value = "/users/{userId}/posts")
     public ResponseEntity<List<PostResponse>> findPosts(
             @PathVariable(value = "userId") Long userId
     ) {
-//        List<Post> posts = postService.findPosts(userNo);
-        List<Post> posts = new ArrayList<>();
+        List<Post> posts = postService.findPosts(userId);
         return ResponseEntity.ok(posts.stream().map(PostResponse::new).collect(Collectors.toList()));
     }
 

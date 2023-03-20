@@ -1,6 +1,5 @@
 package com.lucy.timeline.mapper;
 
-import com.lucy.timeline.model.Follow;
 import com.lucy.timeline.model.User;
 import com.lucy.timeline.model.dto.UserDetail;
 import org.mapstruct.Mapper;
@@ -18,9 +17,7 @@ public interface UserMapper {
 
     void updateUser(User user);
 
-    void deleteUser(Long userNo);
+    void deleteUser(Long userId);
 
-    void insertFollow(Follow follow);
 
-    void deleteFollow(Follow follow);
 }

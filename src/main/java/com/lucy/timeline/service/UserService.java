@@ -1,24 +1,25 @@
 package com.lucy.timeline.service;
 
+import com.lucy.timeline.mapper.FollowMapper;
 import com.lucy.timeline.mapper.UserMapper;
 import com.lucy.timeline.model.Follow;
 import com.lucy.timeline.model.User;
 import com.lucy.timeline.model.dto.UserDetail;
 import com.lucy.timeline.model.request.UserRequest;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 @Transactional
 public class UserService {
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
+    private final FollowMapper followMapper;
+
 
     public List<User> findUsers(){
         return userMapper.findUsers();
@@ -37,17 +38,19 @@ public class UserService {
         userMapper.updateUser(user);
     }
 
-    public void deleteUser(Long user_no){
-        // TODO: 1. 팔로워 모두 삭제
-        // 2. 유저에서 제거
-        userMapper.deleteUser(user_no);
+    public void deleteUser(Long userId){
+        followMapper.deleteFollowByUserId(userId);
+        userMapper.deleteUser(userId);
     }
 
-    public void followUser(Follow follow){
-        userMapper.insertFollow(follow);
+    public void followUser(Long userId, Long followUserId){
+
+        if (followMapper.findFollow(userId, followUserId) ==  null) {
+            followMapper.addFollow(new Follow(userId, followUserId));
+        }
     }
 
-    public void unFollowUser(Follow follow){
-        userMapper.deleteFollow(follow);
+    public void unFollowUser(Long userId, Long followUserId){
+        followMapper.deleteFollow(userId, followUserId);
     }
 }

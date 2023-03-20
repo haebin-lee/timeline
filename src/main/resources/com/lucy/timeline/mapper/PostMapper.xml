@@ -3,28 +3,21 @@
 
 <mapper namespace="com.lucy.timeline.mapper.PostMapper">
     <select id = "findPosts" resultType = "com.lucy.timeline.model.Post">
-        with postings as (
-            select
-                post_no, user_no, contents, created_at
-            from timeline.post
-            where is_deleted='F'
-            and user_no in (
-                select user_no
-                from timeline.t_follow f
-                where f.follow_user_no = #{userNo}
-            )
+        select *
+        from (
+            select p.id, p.user_id, p.contents, p.created_at, p.updated_at
+            from timeline.post p
+            where user_id = #{userId}
+
             union all
-            select
-                post_no, user_no, contents, created_at
-            from timeline.post
-            where is_deleted='F'
-            and user_no = #{userNo}
-        )
-        select u.user_no, u.user_name, p.post_no, p.contents, p.created_at
-        from postings p
-        join timeline.t_user u
-        on p.user_no = u.user_no
-        order by p.insert_timestamp desc
+
+            select p.id, p.user_id, p.contents, p.created_at, p.updated_at
+            from timeline.post p
+            join timeline.follow f
+            on p.user_id = f.follow_user_id
+            where f.user_id = #{userId}
+        ) a
+        order by a.created_at desc
     </select>
 
     <select id = "findPost" resultType="com.lucy.timeline.model.Post">

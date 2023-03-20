@@ -28,14 +28,14 @@
     <update id= "updateUser" parameterType="com.lucy.timeline.model.User">
         update timeline.user
         set name = #{name}
-        where user_no = #{user_no}
+        where id = #{id}
     </update>
 
     <delete id = "deleteUser">
         delete from timeline.user where id = {userId}
     </delete>
 
-    <insert id = "insertFollow" parameterType="com.lucy.timeline.model.Follow">
+    <insert id = "addFollow" parameterType="com.lucy.timeline.model.Follow">
         with upsert as (
             update timeline.t_follow
             set is_deleted='F'
@@ -49,9 +49,8 @@
     </insert>
 
     <delete id = "deleteFollow" parameterType="com.lucy.timeline.model.Follow">
-        update timeline.t_follow
-        set is_deleted = 'T'
-        where user_no = #{user_no}
-        and follow_user_no = #{follow_user_no}
+        delete from timeline.follow
+        where user_id = #{userId}
+        and follow_user_id = #{followUserId}
     </delete>
 </mapper>
